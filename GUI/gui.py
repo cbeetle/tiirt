@@ -67,8 +67,8 @@ class Application(tk.Frame):
         self.labelFilters=tk.Label(self.frame2, text=("Filtry:"))
         self.labelFilters.grid(column=0, row=0)
 
-        self.ListboxFilters=tk.Listbox(self.frame2, height=15, width=25)
-        self.ListboxFilters.grid(column=0, row=1, pady=10)
+        self.listboxFilters=tk.Listbox(self.frame2, height=15, width=25)
+        self.listboxFilters.grid(column=0, row=1, pady=10)
 
         self.frame2_1=tk.Frame(self.frame2)
         self.frame2_1.grid(column=0, row=2)

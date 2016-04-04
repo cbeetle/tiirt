@@ -1,115 +1,126 @@
-﻿#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from tkinter import *
-from tkinter import ttk
-import cv2
-from PIL import Image, ImageTk
+﻿# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+import tkinter as tk
 
-class Okno(Frame):  # definiujemy klase
+class GUI(tk.Frame):
+    def __init__(self, master=None):
+        tk.Frame.__init__(self, master)
+        self.grid()
+        self.createWidgets()
 
-    def __init__(self, parent):
-        Frame.__init__(self, parent)
-        self.parent = parent
-        self.init_ui()
+    def createWidgets(self):
+        self.frame0=tk.Frame(self)
+        self.frame0.grid(column=0, row=0, sticky=tk.W)
 
-    def init_ui(self):
-        self.parent.title("Projekt z TiRT - panel sterowania")
-        ttk.Style().configure("TButton", padding=(0, 5, 0, 5), font='serif 10')
-        self.columnconfigure(0, pad=3)
-        self.columnconfigure(1, pad=3)
-        self.rowconfigure(0, pad=3)
+        self.menubuttonResetCharts = tk.Menubutton(self.frame0, text="Resetuj wykresy")
+        self.menubuttonResetCharts.grid(column=0, row=0)
+        self.menuResetChartsMenu = tk.Menu(self.menubuttonResetCharts, tearoff=0)
+        self.menubuttonResetCharts['menu']=self.menuResetChartsMenu
 
-        # lbl-etykieta, cls-przycisk, lst-listbox, w pack definiujesz wyrównanie, padding, rozszerzalność
-        placeholder = Button(self, text="Resetuj statystyki", command=self.quit)
-        placeholder.grid(row=1, column=0, sticky=W + E)
+        self.menuResetChartsMenu.add_command(label="Komenda1", command=self.quit)
+        self.menuResetChartsMenu.add_command(label="Komenda2", command=self.quit)
 
-        placeholder = Button(self, text="Generuj wykresy", command=self.quit)
-        placeholder.grid(row=1, column=1, sticky=W + E)
+        self.menubuttonGenerateCharts = tk.Menubutton(self.frame0, text="Generuj wykresy")
+        self.menubuttonGenerateCharts.grid(column=1, row=0)
+        self.menuGenerateChartsMenu = tk.Menu(self.menubuttonGenerateCharts, tearoff=0)
+        self.menubuttonGenerateCharts['menu']=self.menuGenerateChartsMenu
 
-        lbl_adres_streamu_wej = Label(self, text="Adres wejściowego streamu:")
-        lbl_adres_streamu_wej.grid(row=3, column=0)
+        self.menuGenerateChartsMenu.add_command(label="Komenda3", command=self.quit)
+        self.menuGenerateChartsMenu.add_command(label="Komenda4", command=self.quit)
 
-        adres_streamu_wej = Entry(self)
-        adres_streamu_wej.grid(padx=15, row=3, column=1, columnspan=2, rowspan=1)
+        self.frame1=tk.Frame(self, padx=10, pady=5)
+        self.frame1.grid(column=0, row=1)
 
-        lbl_filtry = Label(self, text="Filtry:")
-        lbl_filtry.grid(row=3, column=3)
+        self.labelInputStreamAdress=tk.Label(self.frame1, text=("Adres streamu wejściowego:"))
+        self.labelInputStreamAdress.grid(column=0, row=0, pady=10, sticky=tk.W)
 
-        lbl_obraz_wej = Label(self, text="Obraz wejściowy:")
-        lbl_obraz_wej.grid(row=3, column=5)
+        self.entryInputStreamAdress=tk.Entry(self.frame1)
+        self.entryInputStreamAdress.grid(column=1,row=0)
 
-        placeholder = Listbox(self)
-        placeholder.grid(padx=15, row=4, column=3, columnspan=2, rowspan=4)
+        self.labelOutputStreamAdress=tk.Label(self.frame1, text=("Adres streamu wyjściowego:"))
+        self.labelOutputStreamAdress.grid(column=0, row=1, pady=10, sticky=tk.W)
 
-        placeholder = Listbox(self)
-        placeholder.grid(pady=15, row=4, column=5, columnspan=2, rowspan=4)
+        self.entryOutputStreamAdress=tk.Entry(self.frame1)
+        self.entryOutputStreamAdress.grid(column=1,row=1)
 
-        lbl_adres_streamu_wyj = Label(self, text="Adres wyjściowego streamu:")
-        lbl_adres_streamu_wyj.grid(row=5, column=0)
-        # zadecydowac jaki format itd
+        self.variablePlayPause=tk.IntVar()
+        self.imagePlaySelected=tk.PhotoImage(file="images\\playselected.gif")
+        self.imagePlay=tk.PhotoImage(file="images\\play.gif")
+        self.radiobuttonPlay=tk.Radiobutton(self.frame1, image=self.imagePlay, selectimage=self.imagePlaySelected,borderwidth=1,indicatoron=0, variable=self.variablePlayPause, value=0)
+        self.radiobuttonPlay.grid(column=1,row=2,)
 
-        cls_start = Button(self, text="|>", command=self.quit)
-        cls_start.grid(row=6, column=1, sticky=W + E)
+        self.imagePauseSelected=tk.PhotoImage(file="images\\pauseselected.gif")
+        self.imagePause=tk.PhotoImage(file="images\\pause.gif")
+        self.radiobuttonPause=tk.Radiobutton(self.frame1, image=self.imagePause, selectimage=self.imagePauseSelected,borderwidth=1,indicatoron=0, variable=self.variablePlayPause, value=1)
+        self.radiobuttonPause.grid(column=1,row=2, sticky=tk.E)
 
-        cls_stop = Button(self, text="[]", command=self.quit)
-        cls_stop.grid(row=6, column=2, sticky=W + E)
+        self.labelFiltersParameters=tk.Label(self.frame1, text="Parametry filtrów:")
+        self.labelFiltersParameters.grid(column=0, row=2, sticky="WS")
 
-        lbl_filtry = Label(self, text="Parametry filtrów:")
-        lbl_filtry.grid(row=7, column=0)
+        self.frameFiltersParameters=tk.Frame(self.frame1, width=300, height=240, bg='#00ffff')
+        self.frameFiltersParameters.grid_propagate(0)
+        self.frameFiltersParameters.grid(column=0, row=3, columnspan=2, pady=10, sticky=tk.W)
 
-        lst_filtry = Listbox(self)
-        lst_filtry.grid(pady=15, row=8, column=0, columnspan=1, rowspan=1)
+        self.frame2=tk.Frame(self, padx=10, pady=5)
+        self.frame2.grid(column=1, row=1)
 
-        lbl_obraz_wyj = Label(self, text="Obraz wyjściowy:")
-        lbl_obraz_wyj.grid(row=9, column=5)
+        self.labelFilters=tk.Label(self.frame2, text=("Filtry:"))
+        self.labelFilters.grid(column=0, row=0)
 
-        placeholder = Label(self, text="TU MA BYĆ TO")
-        placeholder.grid(padx=15, row=10, column=5, columnspan=1, rowspan=1)
+        self.listboxFilters=tk.Listbox(self.frame2, height=15, width=25)
+        self.listboxFilters.grid(column=0, row=1, pady=10)
 
-        cls_plus = Button(self, text="+", command=self.quit)
-        cls_plus.grid(row=11, column=1, sticky=W + E)
+        self.frame2_1=tk.Frame(self.frame2)
+        self.frame2_1.grid(column=0, row=2)
 
-        cls = Button(self, text="[]", command=self.quit)
-        cls.grid(row=11, column=2, sticky=N + S)
+        self.buttonAdd=tk.Button(self.frame2_1, text='+', width=3)
+        self.buttonAdd.grid(column=0, row=0, padx=5)
 
-        self.pack()
+        self.buttonRemove=tk.Button(self.frame2_1, text='-', width=3)
+        self.buttonRemove.grid(column=1, row=0, padx=5)
 
+        self.buttonUp=tk.Button(self.frame2_1, text='\u21E7', width=3)
+        self.buttonUp.grid(column=2, row=0, padx=5)
 
-width, height = 800, 600
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+        self.buttonDown=tk.Button(self.frame2_1, text='\u21E9', width=3)
+        self.buttonDown.grid(column=3, row=0, padx=5)
 
+        self.frame3=tk.Frame(self, padx=15, pady=10)
+        self.frame3.grid(column=2,row=1, rowspan=3)
 
-def main():
-    root = Tk()
-    root.resizable(width=FALSE, height=FALSE)
-    root.bind('<Escape>', lambda e: root.quit())
-    ws = root.winfo_screenwidth()  # sprawdza szerokosc ekranu
-    hs = root.winfo_screenheight()  # sprawdza wysokość ekranu
-    w = 800  # Zadana początkowa szerokość oknna
-    h = 600  # zadana początkowa wysokość okna
-    centerx = (ws / 2) - (w / 2)  # Obliczenia w celu wycentrowania okna
-    centery = (hs / 2) - (h / 2)  # Obliczenia w celu wycentrowania okna
-    root.geometry('%dx%d+%d+%d' % (w, h, centerx, centery))  # Definiuje rozmiar i położenie okna
-    app = Okno(root)  # tworzymy instancje klasy
-    root.mainloop()
+        self.labelInputVideo=tk.Label(self.frame3, text="Obraz wejściowy")
+        self.labelInputVideo.grid(column=0,row=0)
 
+        self.frameInputVideo=tk.Frame(self.frame3, width=320, height=240, bg='#000000')
+        self.frameInputVideo.grid_propagate(0)
+        self.frameInputVideo.grid(column=0, row=1, pady=5)
 
+        self.labelOutputVideo=tk.Label(self.frame3, text="Obraz wyjściowy")
+        self.labelOutputVideo.grid(column=0,row=2, pady=5)
 
-root = Tk()
-lmain = Label(root)
-lmain.pack()
+        self.frameOutputVideo=tk.Frame(self.frame3, width=320, height=240, bg='#000000')
+        self.frameOutputVideo.grid_propagate(0)
+        self.frameOutputVideo.grid(column=0,row=3)
 
-def show_frame():
-    _, frame = cap.read()
-    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-    img = Image.fromarray(cv2image)
-    imgtk = ImageTk.PhotoImage(image=img)
-    lmain.imgtk = imgtk
-    lmain.configure(image=imgtk)
-    lmain.after(33, show_frame)
-show_frame()
+        self.toplevelInputStreamAdress=tk.Toplevel(self)
+        self.toplevelInputStreamAdress.transient(self)
+        self.toplevelInputStreamAdress.aspect(100,100,200,200)
+        self.toplevelInputStreamAdress.title("Wybierz źrodło obrazu")
+        self.toplevelInputStreamAdress.grid()
 
-if __name__ == '__main__':
-    main()
+        self.labelInputStreamAdress=tk.Label(self.toplevelInputStreamAdress, text="Wybierz adres obrazu wejściowego:")
+        self.labelInputStreamAdress.grid(column=0,row=0, pady=5)
+
+        streamOptionList=("Kamerka internetowa", "Stream online")
+        self.variableInputStreamAdress=tk.StringVar()
+        self.variableInputStreamAdress.set(streamOptionList[1])
+        self.variableInputStreamAdress.trace("w", print("dziala"))
+        self.optionMenuInputStreamAdress=tk.OptionMenu(self.toplevelInputStreamAdress, self.variableInputStreamAdress, *streamOptionList)
+        self.optionMenuInputStreamAdress.grid(column=1, row=0, pady=5)
+        def CreateStreamEntry(*args):
+            if self.variableInputStreamAdress.get()=="Stream online":
+                    print (self.variableInputStreamAdress.get())
+                    self.entryInputStreamAdress=tk.Entry(self.toplevelInputStreamAdress)
+                    self.entryInputStreamAdress.grid()
+            elif self.variableInputStreamAdress.get()=="Kamerka internetowa":
+                    print("LALALA")

@@ -1,10 +1,12 @@
+from reader import StreamReader, StreamReaderState
 from gui import GUI
 
 def mainloop():
     print("Loop")
-    app.after(33, mainloop)
+    gui.after(33, mainloop)
 
-app = GUI()
-app.master.title('TiRT - Projekt')
-app.after(33, mainloop)
-app.mainloop()
+reader = StreamReader()
+gui = GUI(reader)
+gui.master.title('TiRT - Projekt')
+#gui.after(33, mainloop)
+gui.mainloop()

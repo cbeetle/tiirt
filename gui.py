@@ -3,7 +3,8 @@
 import tkinter as tk
 
 class GUI(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, reader, master=None):
+        self.reader = reader
         tk.Frame.__init__(self, master)
         self.grid()
         self.createWidgets()

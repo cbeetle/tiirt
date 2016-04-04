@@ -7,8 +7,8 @@ class StreamReaderState(Enum):
 class StreamReader:
     def __init__(self):
         self.state = StreamReaderState.Waiting
-    def connect(address):
+    def connect(self, address):
         self.player=vlc.MediaPlayer('rtsp://' + address)
         self.player.play()
-    def getImage():
-        self.player.video_take_snapshot(0, '.snapshot.tmp.png', 0, 0)
+    def getImage(self):
+        self.player.video_take_snapshot(0, 'snapshot.png', 0, 0)

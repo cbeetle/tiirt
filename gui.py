@@ -1,6 +1,9 @@
 ﻿# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 import tkinter as tk
+from PIL import Image, ImageTk
+import os.path
+import cv2
 
 class GUI(tk.Frame):
     def __init__(self, reader, master=None):
@@ -47,13 +50,13 @@ class GUI(tk.Frame):
         self.variablePlayPause=tk.IntVar()
         self.imagePlaySelected=tk.PhotoImage(file="images\\playselected.gif")
         self.imagePlay=tk.PhotoImage(file="images\\play.gif")
-        self.radiobuttonPlay=tk.Radiobutton(self.frame1, image=self.imagePlay, selectimage=self.imagePlaySelected,borderwidth=1,indicatoron=0, variable=self.variablePlayPause, value=0)
+        self.radiobuttonPlay=tk.Button(self.frame1, image=self.imagePlay, borderwidth=1, command=lambda: self.reader.connect(self.entryInputStreamAdress.get()))
         self.radiobuttonPlay.grid(column=1,row=2,)
 
-        self.imagePauseSelected=tk.PhotoImage(file="images\\pauseselected.gif")
-        self.imagePause=tk.PhotoImage(file="images\\pause.gif")
-        self.radiobuttonPause=tk.Radiobutton(self.frame1, image=self.imagePause, selectimage=self.imagePauseSelected,borderwidth=1,indicatoron=0, variable=self.variablePlayPause, value=1)
-        self.radiobuttonPause.grid(column=1,row=2, sticky=tk.E)
+        #self.imagePauseSelected=tk.PhotoImage(file="images\\pauseselected.gif")
+        #self.imagePause=tk.PhotoImage(file="images\\pause.gif")
+        #self.radiobuttonPause=tk.Radiobutton(self.frame1, image=self.imagePause, selectimage=self.imagePauseSelected,borderwidth=1,indicatoron=0, variable=self.variablePlayPause, value=1)
+        #self.radiobuttonPause.grid(column=1,row=2, sticky=tk.E)
 
         self.labelFiltersParameters=tk.Label(self.frame1, text="Parametry filtrów:")
         self.labelFiltersParameters.grid(column=0, row=2, sticky="WS")
@@ -92,14 +95,22 @@ class GUI(tk.Frame):
         self.labelInputVideo=tk.Label(self.frame3, text="Obraz wejściowy")
         self.labelInputVideo.grid(column=0,row=0)
 
-        self.frameInputVideo=tk.Frame(self.frame3, width=320, height=240, bg='#000000')
+        self.frameInputVideo=tk.Frame(self.frame3, width=320, height=240)
         self.frameInputVideo.grid_propagate(0)
         self.frameInputVideo.grid(column=0, row=1, pady=5)
 
         self.labelOutputVideo=tk.Label(self.frame3, text="Obraz wyjściowy")
         self.labelOutputVideo.grid(column=0,row=2, pady=5)
 
-        self.frameOutputVideo=tk.Frame(self.frame3, width=320, height=240, bg='#000000')
+        self.frameOutputVideo=tk.Frame(self.frame3, width=320, height=240)
         self.frameOutputVideo.grid_propagate(0)
         self.frameOutputVideo.grid(column=0,row=3)
-
+        
+    def update_previews(self):
+        if os.path.isfile('snapshot.png'):
+            #input frame
+            #self.in_img = ImageTk.PhotoImage(Image.open('snapshot.png'))
+            #self.frameInputVideo.configure(image = self.in_img)
+            #image processing
+            self.proc_in_img = cv2.imread('snapshot.png')
+            self.proc_out_img = cv2.blur(self.proc_in_img, (15, 15))

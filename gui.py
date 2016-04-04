@@ -102,25 +102,3 @@ class GUI(tk.Frame):
         self.frameOutputVideo.grid_propagate(0)
         self.frameOutputVideo.grid(column=0,row=3)
 
-        self.toplevelInputStreamAdress=tk.Toplevel(self)
-        self.toplevelInputStreamAdress.transient(self)
-        self.toplevelInputStreamAdress.aspect(100,100,200,200)
-        self.toplevelInputStreamAdress.title("Wybierz źrodło obrazu")
-        self.toplevelInputStreamAdress.grid()
-
-        self.labelInputStreamAdress=tk.Label(self.toplevelInputStreamAdress, text="Wybierz adres obrazu wejściowego:")
-        self.labelInputStreamAdress.grid(column=0,row=0, pady=5)
-
-        streamOptionList=("Kamerka internetowa", "Stream online")
-        self.variableInputStreamAdress=tk.StringVar()
-        self.variableInputStreamAdress.set(streamOptionList[1])
-        self.variableInputStreamAdress.trace("w", print("dziala"))
-        self.optionMenuInputStreamAdress=tk.OptionMenu(self.toplevelInputStreamAdress, self.variableInputStreamAdress, *streamOptionList)
-        self.optionMenuInputStreamAdress.grid(column=1, row=0, pady=5)
-        def CreateStreamEntry(*args):
-            if self.variableInputStreamAdress.get()=="Stream online":
-                    print (self.variableInputStreamAdress.get())
-                    self.entryInputStreamAdress=tk.Entry(self.toplevelInputStreamAdress)
-                    self.entryInputStreamAdress.grid()
-            elif self.variableInputStreamAdress.get()=="Kamerka internetowa":
-                    print("LALALA")

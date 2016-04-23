@@ -108,22 +108,22 @@ class GUI(tk.Frame):
 
 
         
-    def update_previews(self):
+    def update_previews(self, img):
         if os.path.isfile('snapshot.png'):
             #input frame
             #self.in_img = ImageTk.PhotoImage(Image.open('snapshot.png'))
             #self.frameInputVideo.configure(image = self.in_img)
             #image processing
-            self.proc_in_img = cv2.imread('snapshot.png')
-            self.im=Image.fromarray(self.proc_in_img)
-            self.imgtk=ImageTk.PhotoImage(image=self.im)
+            self.imgtk=ImageTk.PhotoImage(image=img)
             self.proc_out_img = cv2.blur(self.proc_in_img, (15, 15))
             self.im2=Image.fromarray(self.proc_out_img)
             self.imgtk2=ImageTk.PhotoImage(image=self.im2)
-            self.frameInputVideo=tk.Label(self.frame3, image=self.imgtk, width=320, height=240)
-            self.frameInputVideo.grid(column=0, row=1, pady=5)            
-            self.frameOutputVideo=tk.Label(self.frame3, image=self.imgtk2, width=320, height=240)
-            self.frameOutputVideo.grid(column=0,row=3)
+            self.frameInputVideo.configure(image = self.imgtk)
+            self.frameOutputVideo.configure(image = self.imgtk2)
+            #self.frameInputVideo=tk.Label(self.frame3, image=self.imgtk, width=320, height=240)
+            #self.frameInputVideo.grid(column=0, row=1, pady=5)            
+            #self.frameOutputVideo=tk.Label(self.frame3, image=self.imgtk2, width=320, height=240)
+            #self.frameOutputVideo.grid(column=0,row=3)
             
 
 

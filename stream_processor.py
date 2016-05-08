@@ -21,5 +21,5 @@ class StreamProcessor():
     def on_closing(self):
         #if hasattr(reader, 'player'):
         #    reader.player.stop()
-        self.reader.on_closing()
+        #self.reader.on_closing()
         self.root.destroy()

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
-import cv2
-
+import vlc
 class StreamReaderState(Enum):
     Waiting = 0;
     Connected = 1;
@@ -9,13 +8,7 @@ class StreamReader:
     def __init__(self):
         self.state = StreamReaderState.Waiting
     def connect(self, address):
-        self.cap = cv2.VideoCapture('rtsp://' + address)
-        if not self.cap:
-            print("!!! Failed VideoCapture: invalid parameter!")
-        else:
-            self.state = StreamReaderState.Connected
-    def get_image(self):
-        return self.cap.read()
-    def on_closing(self):
-        if(hasattr(self, 'cap')):
-            self.cap.release()
+        self.player=vlc.MediaPlayer('rtsp://' + address)
+        self.player.play()
+    def getImage(self):
+        self.player.video_take_snapshot(0, 'snapshot.png', 0, 0)
